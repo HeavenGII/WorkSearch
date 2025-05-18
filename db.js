@@ -1,10 +1,16 @@
-const Pool = require('pg').Pool
-const pool = new Pool({
-    user: "postgres",
-    password: "31052022",
-    host: "localhost",
-    port: 5432,
-    database: "WorkSearch"
-})
+const { Pool } = require('pg');
 
-module.exports = pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Проверка подключения при старте
+pool.query('SELECT NOW()')
+  .then(() => console.log('✅ PostgreSQL connected successfully'))
+  .catch(err => {
+    console.error('❌ DB connection error:', err.message);
+    process.exit(1);
+  });
+
+module.exports = pool;
