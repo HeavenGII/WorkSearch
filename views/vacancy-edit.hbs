@@ -1,0 +1,152 @@
+<h1>Изменить вакансию {{vacancy.title}}</h1>
+
+<form action="/vacancies/edit" method="POST" class="vacancy-form">
+    <!-- Основная информация -->
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="title" name="title" type="text" class="validate" required value="{{vacancy.title}}">
+                <label for="title">Название вакансии*</label>
+                <span class="helper-text" data-error="Введите название вакансии"></span>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="salary" name="salary" type="number" class="validate" required min="1" value="{{vacancy.salary}}">
+                <label for="salary">Зарплата*</label>
+                <span class="helper-text" data-error="Введите зарплату"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="company" name="company" type="text" class="validate" required value="{{vacancy.company}}">
+                <label for="company">Компания*</label>
+                <span class="helper-text" data-error="Введите название компании"></span>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="location" name="location" type="text" class="validate" required value="{{vacancy.location}}">
+                <label for="location">Город*</label>
+                <span class="helper-text" data-error="Введите город"></span>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="street" name="street" type="text" class="validate" required value="{{vacancy.street}}">
+                <label for="street">Улица и дом*</label>
+                <span class="helper-text" data-error="Введите улицу и дом"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Детали вакансии -->
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="input-field">
+                <select id="employmentType" name="employmentType" class="validate" required>
+                    <option value="" disabled>Выберите тип занятости</option>
+                    <option value="FULL" {{#ifCond vacancy.employmenttype '===' 'FULL'}}selected{{/ifCond}}>Полная занятость</option>
+                    <option value="PART" {{#ifCond vacancy.employmenttype '===' 'PART'}}selected{{/ifCond}}>Частичная занятость</option>
+                    <option value="REMOTE" {{#ifCond vacancy.employmenttype '===' 'REMOTE'}}selected{{/ifCond}}>Удалённая работа</option>
+                    <option value="INTERN" {{#ifCond vacancy.employmenttype '===' 'INTERN'}}selected{{/ifCond}}>Стажировка</option>
+                </select>
+                <label>Тип занятости*</label>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <select id="experience" name="experience" class="validate">
+                    <option value="" {{#unless vacancy.experience}}selected{{/unless}}>Не имеет значения</option>
+                    <option value="no" {{#ifCond vacancy.experience '===' 'no'}}selected{{/ifCond}}>Без опыта</option>
+                    <option value="1-3" {{#ifCond vacancy.experience '===' '1-3'}}selected{{/ifCond}}>1-3 года</option>
+                    <option value="3-5" {{#ifCond vacancy.experience '===' '3-5'}}selected{{/ifCond}}>3-5 лет</option>
+                    <option value="5+" {{#ifCond vacancy.experience '===' '5+'}}selected{{/ifCond}}>Более 5 лет</option>
+                </select>
+                <label>Требуемый опыт работы</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Текстовые области -->
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <textarea id="description" name="description" class="materialize-textarea validate" required>{{vacancy.description}}</textarea>
+                <label for="description">Описание вакансии*</label>
+                <span class="helper-text" data-error="Введите описание"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <textarea id="requirements" name="requirements" class="materialize-textarea validate" required>{{vacancy.requirements}}</textarea>
+                <label for="requirements">Требования*</label>
+                <span class="helper-text" data-error="Введите требования"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <textarea id="benefits" name="benefits" class="materialize-textarea">{{vacancy.benefits}}</textarea>
+                <label for="benefits">Условия и бонусы</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Контактная информация -->
+    <section class="content-section contact-section">
+        <h2><i class="material-icons">email</i> Контакты</h2>
+        <div class="contact-info">
+          <p><strong>Почта для откликов:</strong> 
+            <a href="mailto:{{vacancy.contact_email}}">{{vacancy.contact_email}}</a>
+          </p>
+        </div>
+    </section>
+    <form action="/vacancies/edit" method="POST">
+      <input type="hidden" name="_csrf" value="{{csrf}}">
+        <div class="row">
+        <div class="col s12">
+                <input type="hidden" name="id" value="{{vacancy.vacancyid}}">
+            <button type="submit" class="btn btn-primary waves-effect">Сохранить изменения</button>
+        </div>
+    </div>
+    </form>
+</form>
+
+<form action="/vacancies/remove" method="POST" class="delete-form">
+  <input type="hidden" name="_csrf" value="{{csrf}}">
+    <input type="hidden" name="id" value="{{vacancy.vacancyid}}">
+    <button type="submit" class="btn red waves-effect waves-light">Удалить вакансию</button>
+</form>
+
+<!-- Инициализация Materialize -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация select
+        var selects = document.querySelectorAll('select');
+        M.FormSelect.init(selects);
+        
+        // Инициализация textarea
+        var textareas = document.querySelectorAll('.materialize-textarea');
+        M.textareaAutoResize(textareas);
+        
+        // Подтверждение удаления
+        document.querySelector('.delete-form').addEventListener('submit', function(e) {
+            if (!confirm('Вы уверены, что хотите удалить эту вакансию?')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>

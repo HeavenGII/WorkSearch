@@ -1,0 +1,277 @@
+<div class="row" style="margin-top: 10px;">
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col s3"><a class="active" href="#profile">Профиль</a></li>
+      <li class="tab col s3"><a href="#vacancies">Мои вакансии</a></li>
+    </ul>
+  </div>
+  
+  <!-- Вкладка профиля -->
+  <div id="profile" class="col s12">
+    <h1>Профиль</h1>
+    <div class="row">
+      <div class="col s6">
+        {{#if portfolio.avatarurl}}
+          <img class="avatar" src="{{portfolio.avatarurl}}" alt="avatar-{{portfolio.name}}" style="max-width: 300px;">
+        {{else}}
+          <div class="no-avatar">No image</div>
+        {{/if}}
+      </div>
+
+      <div class="col s6">
+        <form action="/profile" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="{{csrf}}">
+            <p>Ваш email: <strong>{{user.email}}</strong></p>
+
+            <div class="input-field">
+                <input id="name" name="name" type="text" class="validate" required value="{{portfolio.name}}">
+                <label for="name">Ваше имя</label>
+                <span class="helper-text" data-error="введите имя"></span>
+            </div>
+            
+            <div class="input-field">
+                <input id="surname" name="surname" type="text" class="validate" required value="{{portfolio.surname}}">
+                <label for="surname">Ваша фамилия</label>
+                <span class="helper-text" data-error="введите фамилию"></span>
+            </div>
+
+            <div class="input-field">
+                <input id="secondname" name="secondname" type="text" class="validate" required value="{{portfolio.secondname}}">
+                <label for="secondname">Ваше отчество</label>
+                <span class="helper-text" data-error="введите отчество"></span>
+            </div>
+
+            <div class="input-field">
+                <input id="city" name="city" type="text" class="validate" required value="{{portfolio.city}}">
+                <label for="city">Ваш город</label>
+                <span class="helper-text" data-error="введите город"></span>
+            </div>
+
+            <div class="input-field">
+                <input id="birthday" name="birthday" type="date" class="validate" required value="{{portfolio.birthday}}">
+                <label for="birthday">Ваша дата рождения</label>
+                <span class="helper-text" data-error="введите дату рождения"></span>
+            </div>
+            
+            <label>Ваш пол:</label>
+            <div class="input-field display: flex">
+                <p>
+                    <label>
+                        <input name="sex" type="radio" value="Мужчина" {{#ifeq portfolio.sex "Мужчина"}}checked{{/ifeq}} />
+                        <span>Мужчина</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input name="sex" type="radio" value="Женщина" {{#ifeq portfolio.sex "Женщина"}}checked{{/ifeq}} />
+                        <span>Женщина</span>
+                    </label>
+                </p>
+            </div>
+            
+            <div class="input-field">
+                <input id="education" name="education" type="text" class="validate"  value="{{portfolio.education}}">
+                <label for="education">Ваше образование</label>
+            </div>
+
+            <div class="input-field">
+                <input id="telephone" name="telephone" type="text" class="validate" required value="{{portfolio.telephone}}">
+                <label for="telephone">Ваше контактный номер</label>
+            </div>
+
+            <div class="input-field">
+                <textarea id="information" name="information" class="materialize-textarea" {{#ifeq user.userid @root.user.userid}} {{else}} disabled {{/ifeq}}>{{portfolio.information}}</textarea>
+                <label for="information">Расскажите о себе, о своих навыках, опыте и т.д.</label>
+                <span class="helper-text" data-error="введите информацию"></span>
+            </div>
+            <div class="file-field input-field">
+                <div class="btn  lighten-1">
+                    <span>Фото</span>
+                    <input type="file" name="avatar">
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" value="{{portfolio.avatarurl}}">
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Добавить/Изменить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Вкладка вакансий -->
+  <div id="vacancies" class="col s12" style="display: none;">
+    <div class="row">
+      <div class="col s12">
+        <h2 class="header">Мои вакансии</h2>
+        <div class="vacancies-container">
+          {{#if userVacancies.length}}
+            <div class="vacancies-list">
+              {{#each userVacancies}}
+                <div class="vacancy-card z-depth-1 hoverable">
+                  <div class="vacancy-header">
+                    <h2>{{this.title}}</h2>
+                    <div class="salary">{{#if this.salary}}{{this.salary}}{{else}}По договорённости{{/if}}</div>
+                  </div>
+                  
+                  <div class="vacancy-meta">
+                    <div class="meta-item">
+                      <i class="material-icons">business</i>
+                      <span>{{this.company}}</span>
+                    </div>
+                    <div class="meta-item">
+                      <i class="material-icons">location_on</i>
+                      <span>{{this.location}}</span>
+                    </div>
+                    <div class="meta-item">
+                      <i class="material-icons">work</i>
+                      <span>{{getEmploymentTypeText this.employment_type}}</span>
+                    </div>
+                    <div class="meta-item">
+                      <i class="material-icons">timeline</i>
+                      <span>{{getExperienceText this.experience}}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="vacancy-description">
+                    <p>{{this.shortDescription}}</p>
+                  </div>
+                  
+                  <div class="vacancy-footer">
+                    <div class="footer-left">
+                      <span class="post-date">Опубликовано: {{formatDate this.created_at}}</span>
+                      {{#ifeq this.isconfirm false}}
+                      <span class="post-state badge blue lighten-5 blue-text text-darken-2">
+                        <i class="material-icons tiny">access_time</i> На проверке
+                      </span>
+                    {{/ifeq}}
+                    </div>
+                    <div class="footer-right">
+                      <a href="/vacancies/{{this.vacancyid}}" class="btn lighten-1">Подробнее</a>
+                      <a href="/vacancies/{{this.vacancyid}}/edit?allow=true" class="btn grey lighten-1">Редактировать</a>
+                      <form action="/vacancies/remove" method="POST" class="inline-form">
+                        <input type="hidden" name="_csrf" value="{{../csrf}}">
+                        <input type="hidden" name="id" value="{{this.vacancyid}}">
+                        <button type="submit" class="btn red lighten-2">Удалить</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="empty-state">
+              <h4>У вас пока нет вакансий</h4>
+              <a href="/add" class="btn-large lighten-1">
+                <i class="material-icons left">add</i>Добавить вакансию
+              </a>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация табов
+    const tabs = document.querySelectorAll('.tabs');
+    M.Tabs.init(tabs);
+    
+    // Инициализация полей ввода
+    const inputs = document.querySelectorAll('input');
+    M.updateTextFields(inputs);
+  });
+</script>
+
+<style>
+  
+  /* Остальные стили остаются без изменений */
+  .avatar {
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+  
+  .no-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .vacancy-card {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .vacancy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .vacancy-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .salary {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  
+  .vacancy-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .vacancy-description {
+    margin-bottom: 15px;
+  }
+  
+  .vacancy-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+  
+  .footer-right {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .inline-form {
+    display: inline;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  
+</style>

@@ -1,0 +1,118 @@
+
+ <main class="vacancy-main" style="padding: 0">
+<div class="vacancy-container">
+  <!-- Шапка вакансии -->
+  <div class="vacancy-header">
+    <div class="vacancy-title-block">
+      <h1 class="vacancy-title">{{vacancy.title}}</h1>
+      <div class="vacancy-salary">{{vacancy.salary}} BYN</div>
+    </div>
+    
+    <div class="vacancy-actions">
+      {{#if isLogin}}
+      <form action="/vacancies/reply" method="POST" class="vacancy-form">
+        <input type="hidden" name="_csrf" value="{{csrf}}">
+        <input type="hidden" name="id" value="{{vacancy.vacancyid}}">
+        <button class="btn btn-primary btn-respond">Откликнуться</button>
+      </form>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Основная информация -->
+  <div class="vacancy-info">
+    <div class="vacancy-meta">
+      <div class="meta-item">
+        <i class="material-icons">business</i>
+        <span>{{vacancy.company}}</span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="material-icons">location_on</i>
+        <span>{{vacancy.location}}, {{vacancy.street}}</span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="material-icons">work</i>
+        <span>
+          {{#ifeq vacancy.employment_type 'FULL'}}Полная занятость{{/ifeq}}
+          {{#ifeq vacancy.employment_type 'PART'}}Частичная занятость{{/ifeq}}
+          {{#ifeq vacancy.employment_type 'REMOTE'}}Удалённая работа{{/ifeq}}
+          {{#ifeq vacancy.employment_type 'INTERN'}}Стажировка{{/ifeq}}
+        </span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="material-icons">timeline</i>
+        <span>
+          {{#ifeq vacancy.experience 'no'}}Без опыта{{/ifeq}}
+          {{#ifeq vacancy.experience '1-3'}}1-3 года{{/ifeq}}
+          {{#ifeq vacancy.experience '3-5'}}3-5 лет{{/ifeq}}
+          {{#ifeq vacancy.experience '5+'}}Более 5 лет{{/ifeq}}
+          {{#unless vacancy.experience}}Не имеет значения{{/unless}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Контент вакансии -->
+    <div class="vacancy-content">
+      <section class="content-section">
+        <h2><i class="material-icons">description</i> Описание вакансии</h2>
+        <div class="content-text">{{vacancy.description}}</div>
+      </section>
+
+      <section class="content-section">
+        <h2><i class="material-icons">list_alt</i> Требования</h2>
+        <div class="content-text">{{vacancy.requirements}}</div>
+      </section>
+
+      {{#if vacancy.benefits}}
+      <section class="content-section">
+        <h2><i class="material-icons">card_giftcard</i> Условия и бонусы</h2>
+        <div class="content-text">{{vacancy.benefits}}</div>
+      </section>
+      {{/if}}
+
+      <section class="content-section contact-section">
+        <h2><i class="material-icons">email</i> Контакты</h2>
+        <div class="contact-info">
+          <p><strong>Почта для откликов:</strong> 
+            <a href="mailto:{{vacancy.contact_email}}">{{vacancy.contact_email}}</a>
+          </p>
+        </div>
+      </section>
+    </div>
+    <!-- Блок отклика -->
+    <div class="response-section">
+  {{#if user.userid}}
+    {{#ifeq user.userid @root.vacancy.userid}}
+      <div class="owner-notice">
+        <i class="material-icons">info</i>
+        <span>Это ваша вакансия</span>
+      </div>
+    {{else}}
+      {{#if hasApplied}}
+        <div class="applied-notice">
+          <i class="material-icons">check_circle</i>
+          <span>Вы уже откликались на эту вакансию</span>
+        </div>
+      {{else}}
+        <form id="response-form" class="response-form" action="/vacancies/reply/{{vacancy.vacancyid}}" method="POST">
+          <input type="hidden" name="_csrf" value="{{csrf}}">
+          <h3><i class="material-icons">send</i> Откликнуться на вакансию</h3>
+          <input type="hidden" name="vacancyId" value="{{vacancy.vacancyid}}">
+          <button type="submit" class="btn btn-primary">
+            <i class="material-icons left">send</i> Отправить отклик
+          </button>
+        </form>
+      {{/if}}
+    {{/ifeq}}
+  {{else}}
+    <div class="auth-notice">
+      <i class="material-icons">lock</i>
+      <span>Чтобы откликнуться, <a href="/auth/login">войдите</a> или <a href="/register">зарегистрируйтесь</a></span>
+    </div>
+  {{/if}}
+</div>
+</div>
+</main>

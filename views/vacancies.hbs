@@ -1,0 +1,68 @@
+<div class="row">
+  <!-- Блок фильтров (левая колонка) -->
+  <div class="col s12 m4 l3">
+    <div class="card-panel filters-sidebar">
+      <h5>Фильтры</h5>
+      <form id="filter-form">
+        
+        <!-- Поиск по названию -->
+        <div class="input-field">
+          <input type="text" id="search" name="search">
+          <label for="search">Название вакансии</label>
+        </div>
+
+        <!-- Фильтр по типу занятости -->
+        <div class="input-field">
+          <select id="employmentType" name="employmentType">
+            <option value="" selected>Все типы занятости</option>
+            <option value="FULL">Полная занятость</option>
+            <option value="PART">Частичная занятость</option>
+            <option value="REMOTE">Удалённая работа</option>
+            <option value="INTERN">Стажировка</option>
+          </select>
+          <label>Тип занятости</label>
+        </div>
+
+        <!-- Фильтр по опыту работы -->
+        <div class="input-field">
+          <select id="experience" name="experience">
+            <option value="" selected>Любой опыт</option>
+            <option value="no">Без опыта</option>
+            <option value="1-3">1-3 года</option>
+            <option value="3-5">3-5 лет</option>
+            <option value="5+">Более 5 лет</option>
+          </select>
+          <label>Опыт работы</label>
+        </div>
+
+        <!-- Фильтр по локации -->
+        <div class="input-field">
+          <input type="text" id="location" name="location">
+          <label for="location">Город или регион</label>
+        </div>
+
+        <!-- Фильтр по зарплате -->
+        <div class="input-field">
+          <input type="number" id="salaryMin" name="salaryMin" placeholder="От">
+        </div>
+        <div class="input-field">
+          <input type="number" id="salaryMax" name="salaryMax" placeholder="До">
+        </div>
+
+        <!-- Кнопки фильтров -->
+        <div class="center-align">
+          <button type="submit" class="btn waves-effect">Применить</button>
+          <button type="reset" class="btn-flat">Сбросить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Список вакансий (правая колонка) -->
+  <div class="col s12 m8 l9">
+    <h2 class="header">Список вакансий</h2>
+    <div id="vacancies-container">
+      <!-- Сюда будет загружаться контент через AJAX -->
+    </div>
+  </div>
+</div>

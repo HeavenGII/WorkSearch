@@ -1,0 +1,139 @@
+<h1>Добавить вакансию</h1>
+
+<form action="/add" method="POST">
+<input type="hidden" name="_csrf" value="{{csrf}}">
+    <!-- Основная информация -->
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="title" name="title" type="text" class="validate" required>
+                <label for="title">Название вакансии*</label>
+                <span class="helper-text" data-error="Введите название вакансии"></span>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="salary" name="salary" type="number" class="validate" required min="1">
+                <label for="salary">Зарплата*</label>
+                <span class="helper-text" data-error="Введите зарплату"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="company" name="company" type="text" class="validate" required>
+                <label for="company">Компания*</label>
+                <span class="helper-text" data-error="Введите название компании"></span>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <input id="location" name="location" type="text" class="validate" required>
+                <label for="location">Город*</label>
+                <span class="helper-text" data-error="Введите город"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <input id="street" name="street" type="text" class="validate" required>
+                <label for="street">Улица и дом*</label>
+                <span class="helper-text" data-error="Введите улицу и дом"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Детали вакансии -->
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="input-field">
+                <select id="employmentType" name="employmentType" class="validate" required>
+                    <option value="" disabled selected>Выберите тип занятости</option>
+                    <option value="FULL">Полная занятость</option>
+                    <option value="PART">Частичная занятость</option>
+                    <option value="REMOTE">Удалённая работа</option>
+                    <option value="INTERN">Стажировка</option>
+                </select>
+                <label>Тип занятости*</label>
+            </div>
+        </div>
+        
+        <div class="col s12 m6">
+            <div class="input-field">
+                <select id="experience" name="experience" class="validate">
+                    <option value="" selected>Не имеет значения</option>
+                    <option value="no">Без опыта</option>
+                    <option value="1-3">1-3 года</option>
+                    <option value="3-5">3-5 лет</option>
+                    <option value="5+">Более 5 лет</option>
+                </select>
+                <label>Требуемый опыт работы</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Текстовые области -->
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <textarea id="description" name="description" class="materialize-textarea validate" required></textarea>
+                <label for="description">Описание вакансии*</label>
+                <span class="helper-text" data-error="Введите описание"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <textarea id="requirements" name="requirements" class="materialize-textarea validate" required></textarea>
+                <label for="requirements">Требования*</label>
+                <span class="helper-text" data-error="Введите требования"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="input-field">
+                <textarea id="benefits" name="benefits" class="materialize-textarea"></textarea>
+                <label for="benefits">Условия и бонусы</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Контактная информация -->
+    <div class="row">
+        <div class="col s12 m6">
+          <div class="info-row">
+            <span class="info-label">Почта для связи (указанная при регистрации): </span>
+            <span class="info-value">{{user.email}}</span>
+          </div>
+        </div>
+    </div>
+    
+    <input type="hidden" name="contactEmail" value="{{user.email}}">
+
+    <div class="row">
+        <div class="col s12">
+            <button class="btn btn-primary waves-effect waves-light">Опубликовать вакансию</button>
+        </div>
+    </div>
+</form>
+
+<!-- Инициализация Materialize -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var selects = document.querySelectorAll('select');
+        M.FormSelect.init(selects);
+        
+        var textareas = document.querySelectorAll('.materialize-textarea');
+        M.textareaAutoResize(textareas);
+    });
+</script>

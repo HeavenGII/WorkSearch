@@ -1,0 +1,138 @@
+<div class="hero-section grey lighten-4" style="width: 100%; overflow: hidden; margin-top: 5px;">
+    <div class="container" style="width: 100%; max-width: 100%; padding: 0 15px;">
+        <div class="row valign-wrapper" style="margin: 0 auto; max-width: 1200px;">
+            <div class="col s12 m8">
+                <h1 class="grey-text text-darken-3">Найдите идеальную работу</h1>
+                <p class="flow-text grey-text text-darken-2">Тысячи вакансий от проверенных компаний</p>
+                <div class="hero-buttons">
+                    <a href="/vacancies" class="btn-large waves-effect waves-light teal">Смотреть вакансии</a>
+                    {{#unless isAuth}}
+                    <a href="/auth/register" class="btn-large waves-effect waves-light grey lighten-2 grey-text text-darken-3">Регистрация</a>
+                    {{/unless}}
+                </div>
+            </div>
+<div class="col s12 m4 hide-on-small-only">
+    <img src="/images/1675663833_grizly-club-p-karernii-rost-klipart-4.png" 
+         alt="Карьерный рост" 
+         style="width: 350px; height: auto;">
+</div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section" style="width: 100%; overflow: hidden;">
+    <div class="container" style="width: 100%; max-width: 100%; padding: 0 15px;">
+        <div style="margin: 0 auto; max-width: 1200px;">
+            <h2 class="center-align">Почему выбирают нас</h2>
+            <div class="row">
+                <div class="col s12 m4">
+                    <div class="feature-card center-align" style="padding: 40px 20px;">
+                        <div style="width: 80px; height: 80px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <span style="font-size: 1.5rem; font-weight: 500; color: #1976d2;">✓</span>
+                        </div>
+                        <h3>Надежность</h3>
+                        <p>Все компании проходят проверку</p>
+                    </div>
+                </div>
+                <div class="col s12 m4">
+                    <div class="feature-card center-align" style="padding: 40px 20px;">
+                        <div style="width: 80px; height: 80px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <span style="font-size: 1.5rem; font-weight: 500; color: #1976d2;">🔍</span>
+                        </div>
+                        <h3>Поиск</h3>
+                        <p>Удобные фильтры по параметрам</p>
+                    </div>
+                </div>
+                <div class="col s12 m4">
+                    <div class="feature-card center-align" style="padding: 40px 20px;">
+                        <div style="width: 80px; height: 80px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <span style="font-size: 1.5rem; font-weight: 500; color: #1976d2;">❤️</span>
+                        </div>
+                        <h3>Избранное</h3>
+                        <p>Сохраняйте интересные вакансии</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section grey lighten-4" style="width: 100%; overflow: hidden;">
+    <div class="container" style="width: 100%; max-width: 100%; padding: 0 15px;">
+        <div style="margin: 0 auto; max-width: 1200px;">
+            <h2 class="center-align grey-text text-darken-3">Свежие вакансии</h2>
+            {{#if popularVacancies.length}}
+            <div class="row">
+                {{#each popularVacancies}}
+                <div class="col s12 m6 l4">
+                    <div class="card hoverable white">
+                        <div class="card-content">
+                            <span class="card-title grey-text text-darken-3">{{title}}</span>
+                            <p class="teal-text salary" style="font-weight: bold;">{{salary}}</p>
+                            <p class="grey-text text-darken-1"><i class="material-icons tiny">business</i> {{company}}</p>
+                            <p class="grey-text text-darken-1"><i class="material-icons tiny">location_on</i> {{location}}</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="/vacancies/{{vacancyid}}" class="teal-text">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            <div class="center-align" style="margin-top: 30px;">
+                <a href="/vacancies" class="btn waves-effect waves-light teal">Все вакансии</a>
+            </div>
+            {{else}}
+            <p class="center-align grey-text">Вакансий пока нет</p>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<div class="section white" style="width: 100%; overflow: hidden;">
+    <div class="container" style="width: 100%; max-width: 100%; padding: 0 15px;">
+        <div style="margin: 0 auto; max-width: 1200px;">
+            <h2 class="center-align grey-text text-darken-3">Как это работает?</h2>
+            <div class="row">
+                <div class="col s12 m4">
+                    <div class="center-align">
+                        <div class="step-number teal white-text">1</div>
+                        <h4 class="grey-text text-darken-3">Регистрация</h4>
+                        <p class="grey-text text-darken-2">Создайте аккаунт за 2 минуты</p>
+                    </div>
+                </div>
+                <div class="col s12 m4">
+                    <div class="center-align">
+                        <div class="step-number teal white-text">2</div>
+                        <h4 class="grey-text text-darken-3">Поиск</h4>
+                        <p class="grey-text text-darken-2">Найдите подходящие вакансии</p>
+                    </div>
+                </div>
+                <div class="col s12 m4">
+                    <div class="center-align">
+                        <div class="step-number teal white-text">3</div>
+                        <h4 class="grey-text text-darken-3">Отклик</h4>
+                        <p class="grey-text text-darken-2">Отправьте заявку работодателю</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section teal" style="width: 100%; overflow: hidden;">
+    <div class="container" style="width: 100%; max-width: 100%; padding: 0 15px;">
+        <div style="margin: 0 auto; max-width: 1200px;" class="center-align">
+            <h2 class="white-text">Начните поиск работы сегодня</h2>
+            <p class="flow-text white-text">Тысячи компаний ищут таких специалистов как вы</p>
+            <div class="cta-buttons">
+                {{#if isAuth}}
+                <a href="/vacancies" class="btn-large waves-effect waves-light transparent white-text border-white">Вакансии</a>
+                {{else}}
+                <a href="/auth/register" class="btn-large waves-effect waves-light white teal-text">Зарегистрироваться</a>
+                <a href="/vacancies" class="btn-large waves-effect waves-light transparent white-text border-white">Вакансии</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

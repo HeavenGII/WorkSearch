@@ -1,0 +1,60 @@
+  <ul id="dropdown1" class="dropdown-content">
+    <li><a href="/vacancies">Поиск вакансий</a></li>
+    <li><a href="/add">Добавить вакансию</a></li>
+  </ul>
+  
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo">Поиск Работы ;)</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        {{#if isHome}}
+          <li class="active"><a href="/">Главная</a></li>
+        {{else}}
+          <li><a href="/">Главная</a></li>
+        {{/if}}
+
+
+
+        {{#if isAuth}}
+          {{#if isVacancies}}
+            <li class="active">
+              <a class="dropdown-trigger" data-target="dropdown1">Вакансии</a>
+            </li>
+          {{else if isAdd}}
+            <li class="active">
+              <a class="dropdown-trigger" data-target="dropdown1">Вакансии</a>
+            </li>
+          {{else}}
+            <li>
+              <a class="dropdown-trigger" data-target="dropdown1">Вакансии</a>
+            </li>
+          {{/if}}
+
+          {{#if isProfile}}
+            <li class="active"><a href="/profile">Профиль</a></li>
+          {{else}}
+            <li><a href="/profile">Профиль</a></li>
+          {{/if}}
+
+          {{#if isFavourite}}
+            <li class="active"><a href="/favourite">Избранное</a></li>
+         {{else}}
+            <li><a href="/favourite">Избранное</a></li>
+          {{/if}}
+
+            <li><a href="/auth/logout">Выйти</a></li>
+        {{else}}
+          {{#if isVacancies}}
+            <li class="active"><a href="/vacancies">Вакансии</a></li>
+            {{else}}
+            <li><a href="/vacancies">Вакансии</a></li>
+          {{/if}}
+          {{#if isLogin}}
+            <li class="active"><a href="/auth/login#login">Вход</a></li>
+          {{else}}
+            <li><a href="/auth/login#login">Войти</a></li>
+          {{/if}}
+        {{/if}}
+      </ul>
+    </div>
+  </nav>

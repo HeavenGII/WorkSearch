@@ -1,0 +1,29 @@
+<h1>Избранное</h1>
+
+{{#if vacancies.length}}
+    <div id="favourite">
+        {{#each vacancies}}
+            <div class="row">
+                <div class="col s12 m6">
+                    <div class="card white darken-1">
+                        <div class="card-content black-text">
+                            <span class="card-title">{{title}}</span>
+                            <p class="salary">{{salary}}</p>
+                        </div>
+                        <div class="card-action" id="space_button">
+                            <a href="/vacancies/{{id}}">Посмотреть</a>
+                            <form action="/favourite/remove/{{id}}" method="POST">
+                                <input type="hidden" name="_csrf" value="{{../_csrf}}">
+                                <button type="submit" class="btn btm-small red">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+{{else}}
+    <p>Пусто</p>
+{{/if}}
