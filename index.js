@@ -6,6 +6,7 @@ const flash = require('connect-flash')
 const helmet = require('helmet')
 const compression = require('compression')
 const session = require('express-session')
+const pgSession = require('connect-pg-simple')(session)
 const { engine } = require('express-handlebars')
 const homeRoutes = require('./routes/home')
 const addRoutes = require('./routes/add')
@@ -41,10 +42,15 @@ app.use('/images', express.static(imagesDir))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(session({
-    secret: keys.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-}))
+  store: new pgSession({
+    pool: pool,
+    tableName: 'user_sessions' // таблица для хранения сессий
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 дней
+}));
 app.use(fileMiddleware.single('avatar'))
 app.use(flash())
 app.use(helmet())
