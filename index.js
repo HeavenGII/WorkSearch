@@ -82,6 +82,8 @@ app.use(helmet.contentSecurityPolicy({
     }
 }))
 app.use(csrfProtection)
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.use(compression())
 app.use(varMiddleware)
 app.use(userMiddleware)

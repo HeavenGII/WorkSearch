@@ -82,7 +82,7 @@ router.get('/', auth, async (req, res) => {
             user: user,
             portfolio: portfolio,
             userVacancies: userVacancies,
-            csrf: req.csrfToken(),
+            csrfToken: req.csrfToken(),
             helpers: {
                 getEmploymentTypeText: getEmploymentTypeText,
                 getExperienceText: getExperienceText,
