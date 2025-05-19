@@ -1,36 +1,53 @@
 const { Pool } = require('pg');
 
 const getDbConfig = () => {
-  if (process.env.NODE_ENV === 'production') {
-    // Для Railway - используем только DATABASE_URL из переменных окружения
+  // Для локальной разработки
+  if (process.env.NODE_ENV !== 'production') {
     return {
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }
+      user: "postgres",
+      password: "31052022",
+      host: "127.0.0.1",
+      port: 5432,
+      database: "WorkSearch",
+      ssl: false
     };
   }
-  
-  // Для локальной разработки
-  return {
-    user: "postgres",
-    password: "31052022",
-    host: "127.0.0.1",
-    port: 5432,
-    database: "WorkSearch",
-    ssl: false
-  };
+
+  // Для продакшена (Railway)
+  try {
+    const dbUrl = new URL(process.env.DATABASE_URL);
+    return {
+      user: dbUrl.username,
+      password: dbUrl.password,
+      host: dbUrl.hostname,
+      port: dbUrl.port,
+      database: dbUrl.pathname.slice(1),
+      ssl: { rejectUnauthorized: false }
+    };
+  } catch (err) {
+    console.error('❌ Invalid DATABASE_URL:', process.env.DATABASE_URL);
+    console.error('Error:', err.message);
+    process.exit(1);
+  }
 };
 
 const pool = new Pool(getDbConfig());
 
-// Улучшенная обработка ошибок
-pool.on('error', (err) => {
-  console.error('Unexpected DB error:', err);
-  process.exit(-1);
-});
+// Проверка подключения при старте
+pool.query('SELECT NOW()')
+  .then(res => console.log('✅ PostgreSQL connected at:', res.rows[0].now))
+  .catch(err => {
+    console.error('❌ DB connection failed!');
+    console.error('Configuration:', {
+      host: getDbConfig().host,
+      port: getDbConfig().port,
+      database: getDbConfig().database
+    });
+    console.error('Error details:', err.message);
+    
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1); // Завершаем процесс в production
+    }
+  });
 
-module.exports = {
-  query: (text, params) => {
-    console.log('Executing query:', text);
-    return pool.query(text, params);
-  }
-};
+module.exports = pool;
