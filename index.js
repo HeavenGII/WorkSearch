@@ -1,7 +1,7 @@
 const express = require('express')
 const path = require('path')
-const cookieParser = require('cookie-parser')
-const { csrfProtection, doubleCsrf } = require('./middleware/csrfDouble')
+const csrf = require('csurf')
+const csrfProtection = csrf({ cookie: true })
 const flash = require('connect-flash')
 const helmet = require('helmet')
 const compression = require('compression')
@@ -81,7 +81,6 @@ app.use(helmet.contentSecurityPolicy({
     }
 }))
 app.use(csrfProtection)
-app.use(doubleCsrf)
 app.use(compression())
 app.use(varMiddleware)
 app.use(userMiddleware)
