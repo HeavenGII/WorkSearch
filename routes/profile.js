@@ -103,7 +103,7 @@ router.post('/', auth, async (req, res) => {
             education: req.body.education,
             telephone: req.body.telephone,
             information: req.body.information,
-            avatarUrl: null
+            avatarUrl: req.file ? req.file.location : null
         }
 
         if (req.file) {
