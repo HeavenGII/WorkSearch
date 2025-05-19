@@ -45,12 +45,12 @@ app.use(cookieParser())
 app.use(session({
   store: new pgSession({
     pool: pool,
-    tableName: 'user_sessions' // таблица для хранения сессий
+    tableName: 'user_sessions' 
   }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 дней
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 app.use(fileMiddleware.single('avatar'))
 app.use(flash())

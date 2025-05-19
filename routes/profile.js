@@ -30,11 +30,18 @@ function formatDate(date) {
 router.get('/', auth, async (req, res) => {
     try {
         const result = await db.query(`
-            SELECT u.*, p.* 
+            SELECT 
+                u.*, 
+                p.*,
+                CASE 
+                    WHEN p.avatarData IS NOT NULL 
+                    THEN '/profile/avatar/' || p.portfolioId 
+                    ELSE NULL 
+                END as avatarUrl
             FROM Users u
             LEFT JOIN Portfolio p ON u.portfolioId = p.portfolioId
             WHERE u.userId = $1
-        `, [req.user.userId])
+        `, [req.user.userId]);
         
         const userData = result.rows[0]
 
@@ -91,9 +98,15 @@ router.get('/', auth, async (req, res) => {
     }
 })
 
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, upload.single('avatar'), async (req, res) => {
     try {
-        const toChange = {
+        const userResult = await db.query(
+            'SELECT portfolioId FROM Users WHERE userId = $1', 
+            [req.user.userId]
+        );
+        const portfolioId = userResult.rows[0]?.portfolioid;
+
+        const updateData = {
             name: req.body.name,
             surname: req.body.surname,
             secondname: req.body.secondname,
@@ -103,15 +116,14 @@ router.post('/', auth, async (req, res) => {
             education: req.body.education,
             telephone: req.body.telephone,
             information: req.body.information,
-            avatarUrl: null
-        }
+            avatarData: null,
+            avatarMimeType: null
+        };
 
         if (req.file) {
-            toChange.avatarUrl = `/images/${req.file.filename}`
+            updateData.avatarData = req.file.buffer;
+            updateData.avatarMimeType = req.file.mimetype;
         }
-
-        const userResult = await db.query('SELECT portfolioId FROM Users WHERE userId = $1', [req.user.userId])
-        const portfolioId = userResult.rows[0].portfolioid
 
         if (portfolioId) {
             await db.query(
@@ -125,58 +137,64 @@ router.post('/', auth, async (req, res) => {
                     education = $7,
                     telephone = $8,
                     information = $9,
-                    avatarUrl = COALESCE($10, avatarUrl)
-                WHERE portfolioId = $11`,
+                    avatarData = COALESCE($10, avatarData),
+                    avatarMimeType = COALESCE($11, avatarMimeType)
+                WHERE portfolioId = $12`,
                 [
-                    toChange.name,
-                    toChange.surname,
-                    toChange.secondname,
-                    toChange.city,
-                    toChange.birthday,
-                    toChange.sex,
-                    toChange.education,
-                    toChange.telephone,
-                    toChange.information,
-                    toChange.avatarUrl,
+                    updateData.name,
+                    updateData.surname,
+                    updateData.secondname,
+                    updateData.city,
+                    updateData.birthday,
+                    updateData.sex,
+                    updateData.education,
+                    updateData.telephone,
+                    updateData.information,
+                    updateData.avatarData,
+                    updateData.avatarMimeType,
                     portfolioId
                 ]
-            )
+            );
         } else {
             const newPortfolio = await db.query(
                 `INSERT INTO Portfolio (
                     name, surname, secondname, city, birthday, 
-                    sex, education, telephone, information, avatarUrl
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                    sex, education, telephone, information, 
+                    avatarData, avatarMimeType
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                 RETURNING portfolioId`,
                 [
-                    toChange.name,
-                    toChange.surname,
-                    toChange.secondname,
-                    toChange.city,
-                    toChange.birthday,
-                    toChange.sex,
-                    toChange.education,
-                    toChange.telephone,
-                    toChange.information,
-                    toChange.avatarUrl
+                    updateData.name,
+                    updateData.surname,
+                    updateData.secondname,
+                    updateData.city,
+                    updateData.birthday,
+                    updateData.sex,
+                    updateData.education,
+                    updateData.telephone,
+                    updateData.information,
+                    updateData.avatarData,
+                    updateData.avatarMimeType
                 ]
-            )
+            );
+            
             await db.query(
                 'UPDATE Users SET portfolioId = $1 WHERE userId = $2',
                 [newPortfolio.rows[0].portfolioid, req.user.userId]
-            )
+            );
         }
 
         res.redirect('/profile');
     } catch (e) {
-        console.error('Update error:', e)
+        console.error('Update error:', e);
         res.status(500).render('error', {
             title: 'Ошибка',
             message: 'Произошла ошибка при обновлении профиля',
             error: e
-        })
+        });
     }
 })
+
 
 router.get('/:id', async (req, res) => {
     try {
@@ -218,6 +236,25 @@ router.get('/:id', async (req, res) => {
             message: 'Ошибка при получении профиля пользователя',
             error: e
         })
+    }
+})
+
+router.get('/avatar/:portfolioId', async (req, res) => {
+    try {
+        const result = await db.query(
+            'SELECT avatarData, avatarMimeType FROM Portfolio WHERE portfolioId = $1',
+            [req.params.portfolioId]
+        )
+
+        if (!result.rows[0]?.avatarData) {
+            return res.status(404).send('Avatar not found')
+        }
+
+        res.set('Content-Type', result.rows[0].avatarmimetype)
+        res.send(result.rows[0].avatardata)
+    } catch (e) {
+        console.error('Error fetching avatar:', e)
+        res.status(500).send('Server error')
     }
 })
 
