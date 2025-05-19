@@ -1,8 +1,8 @@
-// In middleware/csrfDouble.js
 const csrf = require('csurf');
 
 const csrfProtection = csrf({
   cookie: {
+    key: '_csrf',
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     sameSite: 'strict'
@@ -10,15 +10,14 @@ const csrfProtection = csrf({
 });
 
 const doubleCsrf = (req, res, next) => {
-  // Only set XSRF-TOKEN cookie if it doesn't exist
-  if (!req.cookies['XSRF-TOKEN']) {
+  if (req.method === 'GET') {
     res.cookie('XSRF-TOKEN', req.csrfToken(), {
       secure: process.env.NODE_ENV === 'production',
-      httpOnly: false,
+      httpOnly: false, 
       sameSite: 'strict'
     });
   }
   next();
 };
 
-module.exports = { csrfProtection, doubleCsrf }
+module.exports = { csrfProtection, doubleCsrf };

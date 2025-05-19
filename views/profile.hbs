@@ -11,9 +11,8 @@
     <h1>Профиль</h1>
     <div class="row">
       <div class="col s6">
-        {{#if portfolio.avatarData}}
-          <img class="avatar" src="/profile/avatar/{{portfolio.portfolioId}}" 
-              alt="avatar-{{portfolio.name}}" style="max-width: 300px;">
+        {{#if portfolio.avatarurl}}
+          <img class="avatar" src="{{portfolio.avatarurl}}" alt="avatar-{{portfolio.name}}" style="max-width: 300px;">
         {{else}}
           <div class="no-avatar">No image</div>
         {{/if}}
@@ -21,7 +20,7 @@
 
       <div class="col s6">
         <form action="/profile" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <input type="hidden" name="_csrf" value="{{csrf}}">
             <p>Ваш email: <strong>{{user.email}}</strong></p>
 
             <div class="input-field">

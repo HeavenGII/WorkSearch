@@ -1,8 +1,7 @@
 const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
-const csrf = require('csurf')
-const csrfProtection = csrf({ cookie: true })
+const { csrfProtection, doubleCsrf } = require('./middleware/csrfDouble')
 const flash = require('connect-flash')
 const helmet = require('helmet')
 const compression = require('compression')
@@ -39,18 +38,21 @@ app.set('view engine', 'hbs')
 app.set('views', 'views')
 
 app.use(express.static(path.join(__dirname, 'public')))
+const imagesDir = path.join(__dirname, 'images')
+app.use('/images', express.static(imagesDir))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(session({
   store: new pgSession({
     pool: pool,
-    tableName: 'user_sessions' 
+    tableName: 'user_sessions'
   }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
-}))
+}));
+app.use(fileMiddleware.single('avatar'))
 app.use(flash())
 app.use(helmet())
 app.use(helmet.contentSecurityPolicy({
@@ -73,17 +75,12 @@ app.use(helmet.contentSecurityPolicy({
             "https://fonts.gstatic.com", 
             "https://cdnjs.cloudflare.com"
         ],
-        imgSrc: [
-            "'self'", 
-            "data:",
-            "blob:"
-        ],
+        imgSrc: ["'self'", "data:"],
         connectSrc: ["'self'"]
     }
 }))
 app.use(csrfProtection)
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.use(doubleCsrf)
 app.use(compression())
 app.use(varMiddleware)
 app.use(userMiddleware)

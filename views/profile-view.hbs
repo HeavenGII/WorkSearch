@@ -4,10 +4,10 @@
     <h1>Профиль пользователя</h1>
     <div class="row">
       <div class="col s6">
-        {{#if portfolio.avatarUrl}}
-          <img src="{{portfolio.avatarUrl}}" alt="Аватар" class="avatar-img">
+        {{#if portfolio.avatarurl}}
+          <img class="avatar" src="{{portfolio.avatarurl}}" alt="avatar-{{portfolio.name}}" style="max-width: 300px;">
         {{else}}
-          <div class="no-avatar">Нет аватара</div>
+          <div class="no-avatar">No image</div>
         {{/if}}
       </div>
 

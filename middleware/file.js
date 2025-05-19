@@ -1,18 +1,32 @@
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
-const upload = multer({
-  storage: multer.memoryStorage(), // Хранение в памяти, а не на диске
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Разрешены только изображения (JPEG, PNG)'), false);
+
+const imagesDir = path.join(__dirname, '..', 'images'); 
+
+
+const storage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, imagesDir);
+    },
+    filename(req, file, cb) {
+        const safeDate = new Date().toISOString().replace(/:/g, '-');
+        cb(null, `${safeDate}-${file.originalname}`);
     }
-  }
 });
 
-module.exports = upload.single('avatar');
+const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
+const fileFilter = (req, file, cb) => {
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
+module.exports = multer({
+    storage,
+    fileFilter
+});
