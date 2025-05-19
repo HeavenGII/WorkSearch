@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "test": "jest",
     "test:auth": "jest tests_/auth-test.js",
-    "test:vacancies": "jest tests_/vacancies-test.js"
+    "test:vacancies": "jest tests_/vacancies-test.js",
+    "prod": "npm install --omit=dev && node index.js"
   },
   "keywords": [
     "nodejs",

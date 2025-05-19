@@ -98,6 +98,19 @@ app.use('/auth', authRoutes)
 app.use('/favourite', favouriteRoutes)
 app.use('/profile', profileRoutes)
 
+
+pool.query('SELECT NOW()')
+  .then(res => console.log('✅ PostgreSQL connected at:', res.rows[0].now))
+  .catch(err => {
+    console.error('❌ PostgreSQL connection failed!');
+    console.error('Current DB config:', {
+      host: pool.options.host || pool.options.connectionString?.split('@')[1]?.split(':')[0],
+      port: pool.options.port || pool.options.connectionString?.split(':')[3]?.split('/')[0],
+      database: pool.options.database || pool.options.connectionString?.split('/')[3]
+    });
+    console.error('Error details:', err.message);
+  });
+
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3000;
