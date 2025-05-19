@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "web-application",
   "main": "index.js",
+  "railway": {
+  "skipDatabase": true
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
