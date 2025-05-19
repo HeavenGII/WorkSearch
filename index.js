@@ -75,7 +75,11 @@ app.use(helmet.contentSecurityPolicy({
             "https://fonts.gstatic.com", 
             "https://cdnjs.cloudflare.com"
         ],
-        imgSrc: ["'self'", "data:"],
+        imgSrc: [
+            "'self'", 
+            "data:",
+            "blob:"
+        ],
         connectSrc: ["'self'"]
     }
 }))
