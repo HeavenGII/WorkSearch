@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
 const csrfProtection = csrf({ cookie: true })
 const flash = require('connect-flash')
