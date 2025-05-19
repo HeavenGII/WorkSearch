@@ -3,16 +3,12 @@
   "version": "1.0.0",
   "description": "web-application",
   "main": "index.js",
-  "railway": {
-  "skipDatabase": true
-  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
     "test:auth": "jest tests_/auth-test.js",
-    "test:vacancies": "jest tests_/vacancies-test.js",
-    "prod": "npm install --omit=dev && node index.js"
+    "test:vacancies": "jest tests_/vacancies-test.js"
   },
   "keywords": [
     "nodejs",
@@ -41,14 +37,12 @@
     "compression": "^1.8.0",
     "concat-map": "^0.0.1",
     "connect-flash": "^0.1.1",
-    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
-    "csrf": "^3.1.0",
     "csurf": "^1.2.2",
     "debug": "^4.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "express-handlebars": "^8.0.2",
+    "express-handlebars": "^8.0.1",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "fill-range": "^7.1.1",
@@ -67,7 +61,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
     "normalize-path": "^3.0.0",
-    "pg": "^8.16.0",
+    "pg": "^8.15.6",
     "picomatch": "^2.3.1",
     "pstree.remy": "^1.1.8",
     "readdirp": "^3.6.0",

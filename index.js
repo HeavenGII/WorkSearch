@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
@@ -7,8 +6,6 @@ const flash = require('connect-flash')
 const helmet = require('helmet')
 const compression = require('compression')
 const session = require('express-session')
-const pgSession = require('connect-pg-simple')(session)
-const pool = require('./db')
 const { engine } = require('express-handlebars')
 const homeRoutes = require('./routes/home')
 const addRoutes = require('./routes/add')
@@ -23,7 +20,6 @@ const fileMiddleware = require('./middleware/file')
 const keys = require('./keys')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 const Handlebars = require('handlebars')
-
 
 
 const app = express();
@@ -45,19 +41,10 @@ app.use('/images', express.static(imagesDir))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(session({
-  store: new pgSession({
-    pool: pool,
-    tableName: 'sessions',
-    createTableIfMissing: true
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 30 * 24 * 60 * 60 * 1000
-  }
-}));
+    secret: keys.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+}))
 app.use(fileMiddleware.single('avatar'))
 app.use(flash())
 app.use(helmet())
@@ -98,22 +85,10 @@ app.use('/auth', authRoutes)
 app.use('/favourite', favouriteRoutes)
 app.use('/profile', profileRoutes)
 
-
-pool.query('SELECT NOW()')
-  .then(res => console.log('✅ PostgreSQL connected at:', res.rows[0].now))
-  .catch(err => {
-    console.error('❌ PostgreSQL connection failed!');
-    console.error('Current DB config:', {
-      host: pool.options.host || pool.options.connectionString?.split('@')[1]?.split(':')[0],
-      port: pool.options.port || pool.options.connectionString?.split(':')[3]?.split('/')[0],
-      database: pool.options.database || pool.options.connectionString?.split('/')[3]
-    });
-    console.error('Error details:', err.message);
-  });
-
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log('server is running on port: ', PORT);
 })
