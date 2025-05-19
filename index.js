@@ -51,8 +51,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
-}));
-app.use(fileMiddleware.single('avatar'))
+}))
 app.use(flash())
 app.use(helmet())
 app.use(helmet.contentSecurityPolicy({

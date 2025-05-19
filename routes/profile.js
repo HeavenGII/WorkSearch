@@ -103,22 +103,18 @@ router.post('/', auth, (req, res, next) => {
   file(req, res, async (err) => {
     if (err) {
       // Обработка ошибок Multer
-      if (err.code === 'LIMIT_FILE_SIZE') {
-        req.flash('error', 'Файл слишком большой (максимум 5MB)');
-        return res.redirect('/profile');
+      if (err instanceof multer.MulterError) {
+        req.flash('error', 'Ошибка загрузки файла: ' + err.message);
+      } else {
+        req.flash('error', err.message);
       }
-      if (err.message.includes('image')) {
-        req.flash('error', 'Разрешены только изображения');
-        return res.redirect('/profile');
-      }
-      console.error('Upload error:', err);
-      return res.status(500).render('error', {
-        title: 'Ошибка загрузки',
-        message: 'Ошибка при обработке файла'
-      });
+      return res.redirect('/profile');
     }
 
+
     try {
+      const avatarUrl = req.file ? '/uploads/' + req.file.filename : null;
+
         const userResult = await db.query(
             'SELECT portfolioId FROM Users WHERE userId = $1', 
             [req.user.userId]
