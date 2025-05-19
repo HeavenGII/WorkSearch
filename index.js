@@ -38,8 +38,6 @@ app.set('view engine', 'hbs')
 app.set('views', 'views')
 
 app.use(express.static(path.join(__dirname, 'public')))
-const imagesDir = path.join(__dirname, 'images')
-app.use('/images', express.static(imagesDir))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(session({

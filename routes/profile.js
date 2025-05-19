@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const auth = require('../middleware/auth')
 const db = require('../db')
-const upload = require('../middleware/file')
+const fileMiddleware = require('../middleware/file')
 const router = Router()
 
 function getEmploymentTypeText(type) {
@@ -29,25 +29,25 @@ function formatDate(date) {
 }
 
 router.get('/', auth, async (req, res) => {
-    try {
-        const result = await db.query(`
-            SELECT 
-                u.*, 
-                p.*,
-                CASE 
-                    WHEN p.avatarData IS NOT NULL 
-                    THEN '/profile/avatar/' || p.portfolioId 
-                    ELSE NULL 
-                END as avatarUrl
-            FROM Users u
-            LEFT JOIN Portfolio p ON u.portfolioId = p.portfolioId
-            WHERE u.userId = $1
-        `, [req.user.userId]);
+  try {
+    const result = await db.query(`
+      SELECT 
+        u.*, 
+        p.*,
+        CASE 
+          WHEN p.avatarData IS NOT NULL 
+          THEN '/profile/avatar/' || p.portfolioId 
+          ELSE NULL 
+        END as avatarUrl
+      FROM Users u
+      LEFT JOIN Portfolio p ON u.portfolioId = p.portfolioId
+      WHERE u.userId = $1
+    `, [req.user.userId]);
         
         const userData = result.rows[0]
 
         if (!userData) {
-            return res.status(404).render('404', {
+            return res.status(404).render('error', {
                 title: 'Ошибка',
                 message: 'Пользователь не найден'
             })
@@ -99,115 +99,86 @@ router.get('/', auth, async (req, res) => {
     }
 })
 
-router.post('/', auth, (req, res, next) => {
-  file(req, res, async (err) => {
+router.post('/', auth, (req, res) => {
+  fileMiddleware(req, res, async (err) => {
     if (err) {
-      // Обработка ошибок Multer
-      if (err instanceof multer.MulterError) {
-        req.flash('error', 'Ошибка загрузки файла: ' + err.message);
-      } else {
-        req.flash('error', err.message);
-      }
+      console.error('File upload error:', err);
+      req.flash('error', err.message);
       return res.redirect('/profile');
     }
 
-
     try {
-      const avatarUrl = req.file ? '/uploads/' + req.file.filename : null;
+      const toChange = {
+        name: req.body.name,
+        surname: req.body.surname,
+        secondname: req.body.secondname,
+        city: req.body.city,
+        birthday: req.body.birthday,
+        sex: req.body.sex,
+        education: req.body.education,
+        telephone: req.body.telephone,
+        information: req.body.information,
+        avatarData: req.file ? req.file.buffer : null,
+        avatarMimeType: req.file ? req.file.mimetype : null
+      };
 
-        const userResult = await db.query(
-            'SELECT portfolioId FROM Users WHERE userId = $1', 
-            [req.user.userId]
+      const userResult = await db.query('SELECT portfolioId FROM Users WHERE userId = $1', [req.user.userId]);
+      const portfolioId = userResult.rows[0].portfolioid;
+
+      if (portfolioId) {
+        await db.query(
+          `UPDATE Portfolio SET
+            name = $1, surname = $2, secondname = $3,
+            city = $4, birthday = $5, sex = $6,
+            education = $7, telephone = $8, information = $9,
+            avatarData = $10, avatarMimeType = $11
+          WHERE portfolioId = $12`,
+          [...Object.values(toChange), portfolioId]
         );
-        const portfolioId = userResult.rows[0]?.portfolioid;
+      } else {
+        const newPortfolio = await db.query(
+          `INSERT INTO Portfolio (
+            name, surname, secondname, city, birthday,
+            sex, education, telephone, information,
+            avatarData, avatarMimeType
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          RETURNING portfolioId`,
+          Object.values(toChange)
+        );
+        await db.query(
+          'UPDATE Users SET portfolioId = $1 WHERE userId = $2',
+          [newPortfolio.rows[0].portfolioid, req.user.userId]
+        );
+      }
 
-        const updateData = {
-            name: req.body.name,
-            surname: req.body.surname,
-            secondname: req.body.secondname,
-            city: req.body.city,
-            birthday: req.body.birthday,
-            sex: req.body.sex,
-            education: req.body.education,
-            telephone: req.body.telephone,
-            information: req.body.information,
-            avatarData: null,
-            avatarMimeType: null
-        };
-
-        if (req.file) {
-            updateData.avatarData = req.file.buffer;
-            updateData.avatarMimeType = req.file.mimetype;
-        }
-
-        if (portfolioId) {
-            await db.query(
-                `UPDATE Portfolio SET
-                    name = $1,
-                    surname = $2,
-                    secondname = $3,
-                    city = $4,
-                    birthday = $5,
-                    sex = $6,
-                    education = $7,
-                    telephone = $8,
-                    information = $9,
-                    avatarData = COALESCE($10, avatarData),
-                    avatarMimeType = COALESCE($11, avatarMimeType)
-                WHERE portfolioId = $12`,
-                [
-                    updateData.name,
-                    updateData.surname,
-                    updateData.secondname,
-                    updateData.city,
-                    updateData.birthday,
-                    updateData.sex,
-                    updateData.education,
-                    updateData.telephone,
-                    updateData.information,
-                    updateData.avatarData,
-                    updateData.avatarMimeType,
-                    portfolioId
-                ]
-            );
-        } else {
-            const newPortfolio = await db.query(
-                `INSERT INTO Portfolio (
-                    name, surname, secondname, city, birthday, 
-                    sex, education, telephone, information, 
-                    avatarData, avatarMimeType
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-                RETURNING portfolioId`,
-                [
-                    updateData.name,
-                    updateData.surname,
-                    updateData.secondname,
-                    updateData.city,
-                    updateData.birthday,
-                    updateData.sex,
-                    updateData.education,
-                    updateData.telephone,
-                    updateData.information,
-                    updateData.avatarData,
-                    updateData.avatarMimeType
-                ]
-            );
-            
-            await db.query(
-                'UPDATE Users SET portfolioId = $1 WHERE userId = $2',
-                [newPortfolio.rows[0].portfolioid, req.user.userId]
-            );
-        }
-
-        res.redirect('/profile');
+      req.flash('success', 'Профиль успешно обновлен');
+      res.redirect('/profile');
     } catch (e) {
-      console.error('Save error:', e);
-      res.status(500).render('error', {
-        title: 'Ошибка',
-        message: 'Ошибка при сохранении профиля'
-      });
+      console.error('Update error:', e);
+      req.flash('error', 'Ошибка при обновлении профиля');
+      res.redirect('/profile');
     }
   });
+});
+
+// Добавьте новый роут для отображения аватара
+router.get('/avatar/:portfolioId', async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT avatarData, avatarMimeType FROM Portfolio WHERE portfolioId = $1',
+      [req.params.portfolioId]
+    );
+
+    if (!result.rows[0]?.avatardata) {
+      return res.status(404).send('Avatar not found');
+    }
+
+    res.set('Content-Type', result.rows[0].avatarmimetype);
+    res.send(result.rows[0].avatardata);
+  } catch (e) {
+    console.error('Error fetching avatar:', e);
+    res.status(500).send('Server error');
+  }
 });
 
 router.get('/:id', async (req, res) => {
@@ -250,25 +221,6 @@ router.get('/:id', async (req, res) => {
             message: 'Ошибка при получении профиля пользователя',
             error: e
         })
-    }
-})
-
-router.get('/avatar/:portfolioId', async (req, res) => {
-    try {
-        const result = await db.query(
-            'SELECT avatarData, avatarMimeType FROM Portfolio WHERE portfolioId = $1',
-            [req.params.portfolioId]
-        )
-
-        if (!result.rows[0]?.avatarData) {
-            return res.status(404).send('Avatar not found')
-        }
-
-        res.set('Content-Type', result.rows[0].avatarmimetype)
-        res.send(result.rows[0].avatardata)
-    } catch (e) {
-        console.error('Error fetching avatar:', e)
-        res.status(500).send('Server error')
     }
 })
 
