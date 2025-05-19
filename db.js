@@ -1,26 +1,23 @@
 const { Pool } = require('pg');
 
-// Жестко прописываем ЛОКАЛЬНЫЕ настройки
 const pool = new Pool({
   user: "postgres",
   password: "31052022",
-  host: "127.0.0.1", // Важно использовать IPv4
+  host: "127.0.0.1", // Обязательно IPv4-адрес
   port: 5432,
   database: "WorkSearch",
-  ssl: false
+  ssl: false,
+  connectionTimeoutMillis: 5000
 });
 
-// Проверка подключения
+// Проверка подключения при старте
 pool.query('SELECT NOW()')
-  .then(res => console.log('✅ Локальная PostgreSQL подключена:', res.rows[0].now))
+  .then(res => console.log('✅ PostgreSQL 17 подключена:', res.rows[0].now))
   .catch(err => {
-    console.error('❌ Ошибка подключения к ЛОКАЛЬНОЙ БД');
-    console.error('Проверьте:');
-    console.error('1. Запущен ли сервер PostgreSQL (через services.msc)');
-    console.error('2. Совпадают ли логин/пароль в db.js и вашей БД');
-    console.error('3. Открыт ли порт 5432 (команда: netstat -ano | findstr 5432)');
-    console.error('Подробности ошибки:', err.message);
-    process.exit(1); // Завершаем процесс при ошибке
+    console.error('❌ Ошибка подключения:');
+    console.error('Проверьте пароль и наличие БД WorkSearch');
+    console.error('Подробности:', err.message);
+    process.exit(1);
   });
 
 module.exports = pool;
