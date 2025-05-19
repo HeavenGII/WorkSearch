@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const auth = require('../middleware/auth')
 const db = require('../db')
+const upload = require('../middleware/file')
 const router = Router()
 
 function getEmploymentTypeText(type) {
