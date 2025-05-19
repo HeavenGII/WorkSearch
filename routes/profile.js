@@ -47,7 +47,7 @@ router.get('/', auth, async (req, res) => {
         const userData = result.rows[0]
 
         if (!userData) {
-            return res.status(404).render('error', {
+            return res.status(404).render('404', {
                 title: 'Ошибка',
                 message: 'Пользователь не найден'
             })
@@ -99,7 +99,25 @@ router.get('/', auth, async (req, res) => {
     }
 })
 
-router.post('/', auth, upload.single('avatar'), async (req, res) => {
+router.post('/', auth, (req, res, next) => {
+  file(req, res, async (err) => {
+    if (err) {
+      // Обработка ошибок Multer
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        req.flash('error', 'Файл слишком большой (максимум 5MB)');
+        return res.redirect('/profile');
+      }
+      if (err.message.includes('image')) {
+        req.flash('error', 'Разрешены только изображения');
+        return res.redirect('/profile');
+      }
+      console.error('Upload error:', err);
+      return res.status(500).render('error', {
+        title: 'Ошибка загрузки',
+        message: 'Ошибка при обработке файла'
+      });
+    }
+
     try {
         const userResult = await db.query(
             'SELECT portfolioId FROM Users WHERE userId = $1', 
@@ -187,15 +205,14 @@ router.post('/', auth, upload.single('avatar'), async (req, res) => {
 
         res.redirect('/profile');
     } catch (e) {
-        console.error('Update error:', e);
-        res.status(500).render('error', {
-            title: 'Ошибка',
-            message: 'Произошла ошибка при обновлении профиля',
-            error: e
-        });
+      console.error('Save error:', e);
+      res.status(500).render('error', {
+        title: 'Ошибка',
+        message: 'Ошибка при сохранении профиля'
+      });
     }
-})
-
+  });
+});
 
 router.get('/:id', async (req, res) => {
     try {

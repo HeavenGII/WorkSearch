@@ -1,6 +1,4 @@
 node_modules/
 .env
 .vs/
-keys.dev.js
-keys.prod.js
 package-lock.json
