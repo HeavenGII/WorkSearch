@@ -37,6 +37,7 @@
     "compression": "^1.8.0",
     "concat-map": "^0.0.1",
     "connect-flash": "^0.1.1",
+    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "csurf": "^1.2.2",
     "debug": "^4.4.0",
