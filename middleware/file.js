@@ -1,16 +1,15 @@
-// file.js
-const aws = require('aws-sdk')
-const multer = require('multer')
-const multerS3 = require('multer-s3')
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
 
-const s3 = new aws.S3({
+const s3 = new S3Client({
   endpoint: 'https://storage.yandexcloud.net',
   region: 'ru-central1',
   credentials: {
     accessKeyId: process.env.YC_ACCESS_KEY,
     secretAccessKey: process.env.YC_SECRET_KEY
   }
-})
+});
 
 const upload = multer({
   storage: multerS3({
