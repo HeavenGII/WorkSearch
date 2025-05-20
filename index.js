@@ -99,6 +99,19 @@ app.use('/auth', authRoutes)
 app.use('/favourite', favouriteRoutes)
 app.use('/profile', profileRoutes)
 
+
+async function checkS3Connection() {
+  try {
+    await s3.send(new ListBucketsCommand({}));
+    console.log('✅ Connected to Yandex Cloud S3');
+  } catch (err) {
+    console.error('❌ S3 Connection Error:', err);
+    throw err;
+  }
+}
+
+checkS3Connection().catch(console.error);
+
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3000;
