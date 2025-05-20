@@ -188,9 +188,7 @@ router.post('/clear', auth, async (req, res) => {
         const portfolioId = userResult.rows[0]?.portfolioid;
 
         if (portfolioId) {
-            // Удаляем портфолио
             await db.query('DELETE FROM Portfolio WHERE portfolioId = $1', [portfolioId]);
-            // Обнуляем ссылку в Users
             await db.query('UPDATE Users SET portfolioId = NULL WHERE userId = $1', [req.user.userId]);
         }
 
