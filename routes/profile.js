@@ -108,10 +108,6 @@ router.post('/', auth, async (req, res) => {
                 null
         }
 
-        if (req.file) {
-            toChange.avatarUrl = `/images/${req.file.filename}`
-        }
-
         const userResult = await db.query('SELECT portfolioId FROM Users WHERE userId = $1', [req.user.userId])
         const portfolioId = userResult.rows[0].portfolioid
 

@@ -6,7 +6,7 @@ module.exports = function(email, token) {
         from: keys.EMAIL_FROM,
         subject: 'Change password',
         html: `
-            <h1>Забыл пароль?/h1>
+            <h1>Забыл пароль?<h1>
             <p>Если нет, то проигнорируйте данное сообщение</p>
             <p>Иначе перейдите по ссыолке ниже:</p>
             <p><a href="https://worksearch-qhg0.onrender.com/auth/password/${token}">Изменить пароль</a></p>
