@@ -103,7 +103,9 @@ router.post('/', auth, async (req, res) => {
             education: req.body.education,
             telephone: req.body.telephone,
             information: req.body.information,
-            avatarUrl: req.file ? req.file.location : null
+            avatarUrl: req.file ? 
+                `https://${process.env.YC_BUCKET_NAME}.storage.yandexcloud.net/${req.file.key}` : 
+                null
         }
 
         if (req.file) {
