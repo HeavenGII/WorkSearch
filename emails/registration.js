@@ -9,7 +9,7 @@ module.exports = function(email) {
             <h1>Добро пожаловать!</h1>
             <p>Ваш аккаунт был успешно создан с почтой - ${email}</p>
             <hr />
-            <a href="${keys.BASE_URL}">Главная страница</a>
+            <a href="https://worksearch-qhg0.onrender.com">Главная страница</a>
             `
     }
 }
