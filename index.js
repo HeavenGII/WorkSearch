@@ -77,7 +77,8 @@ app.use(helmet.contentSecurityPolicy({
         "'self'",
         "data:",
         "https://*.storage.yandexcloud.net",
-        "https://storage.yandexcloud.net"
+        "https://storage.yandexcloud.net",
+        `https://${process.env.YC_BUCKET_NAME}.storage.yandexcloud.net`
         ],
         connectSrc: [
             "'self'", 

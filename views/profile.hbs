@@ -18,10 +18,10 @@
           <div class="no-avatar">Нет фото</div>
         {{/if}}
       </div>
-      <div class="debug-info" style="display: none;">
+      <label>
         Avatar URL: {{portfolio.avatarUrl}}
         Current time: {{now}}
-      </div>
+      </label>
       <div class="col s6">
         <form action="/profile" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="_csrf" value="{{csrf}}">
