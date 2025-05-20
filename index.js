@@ -75,15 +75,15 @@ app.use(helmet.contentSecurityPolicy({
             "https://fonts.gstatic.com", 
             "https://cdnjs.cloudflare.com"
         ],
+        imgSrc: [
+        "'self'", 
+        "data:", 
+        "https://storage.yandexcloud.net"
+        ],
         connectSrc: [
             "'self'", 
             "https://storage.yandexcloud.net"
-        ],
-        imgSrc: [
-            "'self'", 
-            "data:", 
-            "https://storage.yandexcloud.net"
-        ],
+        ]
     }
 }))
 app.use(csrfProtection)
