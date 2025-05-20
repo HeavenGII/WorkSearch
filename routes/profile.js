@@ -80,10 +80,11 @@ router.get('/', auth, async (req, res) => {
             helpers: {
                 getEmploymentTypeText: getEmploymentTypeText,
                 getExperienceText: getExperienceText,
+                formatDate: formatDate,
                 formatDateForInput: function(date) {
                     if (!date) return '';
                     return new Date(date).toISOString().split('T')[0];
-                }
+                } 
             }
         })
     } catch (e) {
