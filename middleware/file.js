@@ -12,6 +12,20 @@ const s3 = new S3Client({
   }
 });
 
+// Добавьте в начало file.js
+async function checkS3Connection() {
+  try {
+    await s3.send(new ListBucketsCommand({}));
+    console.log('✅ Connected to Yandex Cloud S3');
+  } catch (err) {
+    console.error('❌ S3 Connection Error:', err);
+    throw err;
+  }
+}
+
+// Вызовите перед использованием
+checkS3Connection().catch(console.error);
+
 const upload = multer({
   storage: multerS3({
     s3: s3,
