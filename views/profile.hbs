@@ -11,13 +11,17 @@
     <h1>Профиль</h1>
     <div class="row">
       <div class="col s6">
+        
         {{#if portfolio.avatarUrl}}
           <img src="{{portfolio.avatarUrl}}" alt="Аватар" class="avatar">
         {{else}}
           <div class="no-avatar">Нет фото</div>
         {{/if}}
       </div>
-
+      <div class="debug-info" style="display: none;">
+        Avatar URL: {{portfolio.avatarUrl}}
+        Current time: {{now}}
+      </div>
       <div class="col s6">
         <form action="/profile" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="_csrf" value="{{csrf}}">
@@ -48,7 +52,7 @@
             </div>
 
             <div class="input-field">
-                <input id="birthday" name="birthday" type="date" class="validate" required value="{{portfolio.birthday}}">
+                <input id="birthday" name="birthday" type="date" class="validate" required value="{{formatDateForInput portfolio.birthday}}">
                 <label for="birthday">Ваша дата рождения</label>
                 <span class="helper-text" data-error="введите дату рождения"></span>
             </div>

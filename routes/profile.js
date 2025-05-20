@@ -24,7 +24,9 @@ function getExperienceText(exp) {
 }
 
 function formatDate(date) {
-    return new Date(date).toLocaleDateString('ru-RU')
+  if (!date) return '';
+  const d = new Date(date);
+  return d.toLocaleDateString('ru-RU');
 }
 
 router.get('/', auth, async (req, res) => {
@@ -98,7 +100,7 @@ router.post('/', auth, async (req, res) => {
             surname: req.body.surname,
             secondname: req.body.secondname,
             city: req.body.city,
-            birthday: req.body.birthday,
+            birthday: req.body.birthday ? new Date(req.body.birthday).toISOString().split('T')[0] : null,
             sex: req.body.sex,
             education: req.body.education,
             telephone: req.body.telephone,

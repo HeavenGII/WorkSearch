@@ -74,10 +74,10 @@ app.use(helmet.contentSecurityPolicy({
             "https://cdnjs.cloudflare.com"
         ],
         imgSrc: [
-            "'self'", 
-            "data:", 
-            "https://storage.yandexcloud.net",
-            `https://${process.env.YC_BUCKET_NAME}.storage.yandexcloud.net`
+        "'self'",
+        "data:",
+        "https://*.storage.yandexcloud.net",
+        "https://storage.yandexcloud.net"
         ],
         connectSrc: [
             "'self'", 
