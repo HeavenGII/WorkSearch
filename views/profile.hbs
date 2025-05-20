@@ -18,12 +18,8 @@
           <div class="no-avatar">Нет фото</div>
         {{/if}}
       </div>
-      <label>
-        Avatar URL: {{portfolio.avatarurl}}
-        Current time: {{now}}
-      </label>
-      <div class="col s6">
-        <form action="/profile" method="POST" enctype="multipart/form-data">
+        <div class="col s6">
+          <form action="/profile" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="_csrf" value="{{csrf}}">
             <p>Ваш email: <strong>{{user.email}}</strong></p>
 
@@ -97,11 +93,27 @@
                     <input class="file-path validate" type="text" value="{{portfolio.avatarurl}}">
                 </div>
             </div>
-
-            <button type="submit" class="btn">Добавить/Изменить</button>
+            <div class="row">
+                <div class="col s6">
+                  <button type="submit" class="btn">Добавить/Изменить</button>
+                </div>
+                <div class="col s6">
+                  <button type="button" class="btn red" id="clear-portfolio">Очистить портфолио</button>
+                </div>
+            </div>
         </form>
       </div>
     </div>
+  </div>
+  <div id="confirm-modal" class="modal">
+  <div class="modal-content">
+    <h4>Подтверждение</h4>
+    <p>Вы уверены, что хотите очистить все данные портфолио?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close btn grey">Отмена</a>
+    <a href="#!" class="btn red" id="confirm-clear">Очистить</a>
+  </div>
   </div>
   
   <!-- Вкладка вакансий -->
@@ -187,7 +199,33 @@
     // Инициализация полей ввода
     const inputs = document.querySelectorAll('input');
     M.updateTextFields(inputs);
+     // Инициализация модального окна
+    const modal = M.Modal.init(document.getElementById('confirm-modal'));
+    
+    // Обработчик кнопки очистки
+    document.getElementById('clear-portfolio').addEventListener('click', function() {
+      modal.open();
+    });
+    
+    // Обработчик подтверждения очистки
+    document.getElementById('confirm-clear').addEventListener('click', function() {
+      fetch('/profile/clear', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'CSRF-Token': '{{csrf}}'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          M.toast({html: 'Ошибка при очистке портфолио'});
+        }
+      });
+    });
   });
+  
 </script>
 
 <style>
